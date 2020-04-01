@@ -9,7 +9,7 @@ GAME RULES:
 
 */
 
-var scores, roundScore, activePlayer, gamePlaying;
+var scores, roundScore, activePlayer, gamePlaying, dice0, dice1, prevDice0, prevDice1, winningScore;
 
 // 0 = firstplayer 1 = secondplayer
 
@@ -19,7 +19,8 @@ function init() {
     roundScore = 0;
     activePlayer = 0;
 
-    document.querySelector('.dice').style.display = 'none';
+    document.querySelector('.dice-0').style.display = 'none';
+    document.querySelector('.dice-1').style.display = 'none';
     document.getElementById('score-0').textContent = '0';
     document.getElementById('score-1').textContent = '0';
     document.getElementById('current-0').textContent = '0';
@@ -48,7 +49,7 @@ console.log(x);*/
 
 
 
-
+/*
 function btn() {
     if (gamePlaying) {
         
@@ -73,12 +74,13 @@ function btn() {
 
 
 };
-
+*/
 
 document.querySelector('.btn-roll').addEventListener('click', btn);  //call back function by eventlistener
 // document.querySelector('.btn-roll').addEventListener('click', function(){console.log('Hello world!')}); //annonymous function
 //https://developer.mozilla.org/en-US/docs/Web/Events
 
+/*
 document.querySelector('.btn-hold').addEventListener('click', function () {
     if (gamePlaying){
         // Add current score to global socre
@@ -102,16 +104,105 @@ document.querySelector('.btn-hold').addEventListener('click', function () {
     
 
 });
+*/
 
 function nextPlayer() {
     roundScore = 0;
+    dice0 = 0;
+    dice1 = 0;
     document.querySelector('#current-' + activePlayer).textContent = roundScore;
     //document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
     activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
     //document.querySelector('.player-' + activePlayer + '-panel').classList.add('active');
     document.querySelector('.player-0-panel').classList.toggle('active');
     document.querySelector('.player-1-panel').classList.toggle('active');
-    document.querySelector('.dice').style.display = 'none';
+    document.querySelector('.dice-0').style.display = 'none';
+    document.querySelector('.dice-1').style.display = 'none';
+
 };
 
 document.querySelector('.btn-new').addEventListener('click', init);
+
+//Additional rule***************************************
+
+//1. lose all scores when roll 6 2 times in a row and go to next player
+
+function btn() {
+    if (gamePlaying) {
+        
+        // 0. Remember last dice
+        prevDice0 = dice0
+        prevDice1 = dice1
+
+        // 1. Random number
+        dice0 = Math.floor(Math.random()*6) + 1;
+        dice1 = Math.floor(Math.random()*6) + 1;
+        
+        // 2. Display the result
+        var diceDOM0 = document.querySelector('.dice-0');
+        var diceDOM1 = document.querySelector('.dice-1');
+        diceDOM0.style.display = 'block';
+        diceDOM1.style.display = 'block';
+        diceDOM0.src = 'dice-' + dice0 + '.png';
+        diceDOM1.src = 'dice-' + dice1 + '.png';
+
+        // 3. Calculation
+
+
+        if ((prevDice0 == 6 || prevDice1 == 6) && (dice0 == 6 || dice1 == 6)){
+
+            // if roll 6 in a row = score to 0 and go next
+            scores[activePlayer] = 0;
+            document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+            nextPlayer();
+
+        } else if (dice0 == 1 || dice1 == 1) {
+            // if roll 1 = go next
+            nextPlayer()
+
+        } else {
+            // else add score and update
+            roundScore += dice1;
+            roundScore += dice0;
+            document.querySelector('#current-' + activePlayer).textContent = roundScore;
+        };
+    };
+
+
+};
+
+//2. let player set winning score
+
+document.querySelector('.btn-hold').addEventListener('click', function () {
+    if (gamePlaying){
+        // Add current score to global socre
+        scores[activePlayer] += roundScore;
+        
+        // Update the UI
+        document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+
+        // Check if player won the game
+        winningScore = document.getElementById("winning-score").value
+        if (scores[activePlayer] < winningScore) {
+            //Next player
+            nextPlayer()
+        } else {
+            document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
+            document.querySelector('.dice-0').style.display = 'none';
+            document.querySelector('.dice-1').style.display = 'none';
+            document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+            document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
+            gamePlaying = false
+        };
+    };
+    
+
+});
+
+//3. add second dice to the game
+
+
+
+//extra from me 
+//1. let player see when roll 1 or 6 in a row
+//2. add rule to read
