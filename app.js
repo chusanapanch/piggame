@@ -120,7 +120,8 @@ function nextPlayer() {
     document.querySelector('.player-1-panel').classList.toggle('active');
     document.querySelector('.dice-0').style.display = 'none';
     document.querySelector('.dice-1').style.display = 'none';
-    
+    document.querySelector('.dice-0').classList.remove('dice-fail');
+    document.querySelector('.dice-1').classList.remove('dice-fail');
 
 };
 
@@ -159,13 +160,18 @@ function btn() {
             roundScore = 0;
             document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
             document.querySelector('#current-' + activePlayer).textContent = roundScore;
-            roundPlaying = false    
+            if (dice0 == 6) document.querySelector('.dice-0').classList.add('dice-fail');
+            if (dice1 == 6) document.querySelector('.dice-1').classList.add('dice-fail');
+            roundPlaying = false
+
 
         } else if (dice0 == 1 || dice1 == 1) {
             // if roll 1 = go next
             roundPlaying = false  ;
             roundScore = 0;
             document.querySelector('#current-' + activePlayer).textContent = roundScore;
+            if (dice0 == 1) document.querySelector('.dice-0').classList.add('dice-fail');
+            if (dice1 == 1) document.querySelector('.dice-1').classList.add('dice-fail');
             
 
         } else {
